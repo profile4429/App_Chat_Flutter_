@@ -8,6 +8,12 @@ class DatabaseMethods {
         .get();
   }
 
+  getUserbyUsernameSnapshot(String username) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .where("username", isEqualTo: username)
+        .snapshots();
+  }
 
   dynamic getUserbyUserEmail(String userEmail) async {
     var docs = (await FirebaseFirestore.instance

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'conversation_screen.dart';
 import 'package:app_chat/modal/user.dart';
 import 'package:app_chat/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SearchScreen extends StatefulWidget {
 
@@ -61,7 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
       DatabaseMethods().createChatRoom(chatRoomId,charRoomMap);
       Navigator.push(context, MaterialPageRoute(
           builder: (context) =>  ConversationScreen(
-              chatRoomId
+              chatRoomId,userName
           )
       ));
     } else {
@@ -110,8 +111,14 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
     return Scaffold(
-      appBar: AppBar(title: Image.asset("images/uit.png",height: 50,),),
+      appBar: AppBar(title: CircleAvatar(
+        radius: 20.0,
+        backgroundColor: Colors.orangeAccent,
+        backgroundImage: NetworkImage(
+            _auth.currentUser!.photoURL.toString()),
+      ),),
       body: Container(
         child: Column(
           children: [

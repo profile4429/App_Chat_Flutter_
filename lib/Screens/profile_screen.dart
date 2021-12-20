@@ -174,7 +174,11 @@ class _profileState extends State<Profile> {
                               .doc(FirebaseAuth.instance.currentUser!.uid)
                               .update({
                             'fullname': fullNameTextEditingController.text,
-                          }).then((value) => debugPrint('updated'));
+                          }).then((value) => showDialog(context: context, builder: (BuildContext context){
+                            return AlertDialog(
+                              title: Text("Success"),
+                            );
+                          }     ));
                         },
                         style: ButtonStyle(
                             backgroundColor:

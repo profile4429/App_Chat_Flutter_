@@ -69,11 +69,14 @@ class _ChatRoomState extends State<ChatRoom> {
             CircleAvatar(
               radius: 20.0,
               backgroundColor: Colors.orangeAccent,
-              backgroundImage: NetworkImage(
-                  _auth.currentUser!.photoURL.toString()),
+              backgroundImage:
+                  NetworkImage(_auth.currentUser!.photoURL.toString()),
             ),
             SizedBox(width: 8),
-            Text("Chats" , style: TextStyle(fontSize: 22 , color: Colors.white),)
+            Text(
+              "Chats",
+              style: TextStyle(fontSize: 22, color: Colors.white),
+            )
           ],
         ),
         actions: [
@@ -109,7 +112,7 @@ class ChatRoomTile extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ConversationScreen(chatRoom)));
+                builder: (context) => ConversationScreen(chatRoom, userName)));
       },
       child: Container(
         color: Colors.white,
@@ -120,6 +123,7 @@ class ChatRoomTile extends StatelessWidget {
                 future: dbMethod.getUserbyUsername(userName),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
+
                     ///when the future is null
                     case ConnectionState.waiting:
                       return CircularProgressIndicator();
@@ -140,10 +144,11 @@ class ChatRoomTile extends StatelessWidget {
                       else {
                         QuerySnapshot? searchSnapshot;
                         searchSnapshot = snapshot.data as QuerySnapshot;
+
                         ///task is complete with some data
                         return CircleAvatar(
-                          foregroundImage: NetworkImage(
-                              searchSnapshot.docs[0]['photoUrl']),
+                          foregroundImage:
+                              NetworkImage(searchSnapshot.docs[0]['photoUrl']),
                         );
                       }
                   }
@@ -156,10 +161,35 @@ class ChatRoomTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    userName,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
-                  ),
+                  FutureBuilder(
+                      future: dbMethod.getUserbyUsername(userName),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+
+                          ///when the future is null
+                          case ConnectionState.waiting:
+                            return CircularProgressIndicator();
+                          case ConnectionState.done:
+                            if (snapshot.hasError)
+                              return Text('Please reload');
+                            else {
+                              QuerySnapshot? searchSnapshot;
+                              searchSnapshot = snapshot.data as QuerySnapshot;
+
+                              ///task is complete with some data
+                              return Text(
+                                searchSnapshot.docs[0]['fullname'],
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.w500),
+                              );
+                            }
+                        }
+                        return Container();
+                      }),
+                  // Text(
+                  //   userName,
+                  //   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                  // ),
                   SizedBox(height: 5.0),
                   Text(
                     "You received a message",
@@ -168,7 +198,10 @@ class ChatRoomTile extends StatelessWidget {
                 ],
               ),
             ),
-            Text(DateTime.now().toString().split(' ')[0] , style: TextStyle(fontSize: 10 , fontWeight: FontWeight.w400),)
+            Text(
+              DateTime.now().toString().split(' ')[0],
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+            )
           ],
         ),
       ),
